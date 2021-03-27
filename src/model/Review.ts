@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import { IReview } from "../types/room";
 
 const ReviewSchema: Schema = new mongoose.Schema({
   text: String,
@@ -16,4 +17,4 @@ const ReviewSchema: Schema = new mongoose.Schema({
   },
 });
 
-export default mongoose.model("Review", ReviewSchema);
+export default mongoose.model<IReview>("Review", ReviewSchema);

@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import { IRoom } from "../types/room";
 
 const RoomSchema: Schema = new mongoose.Schema({
   largeBuildingType: {
@@ -64,4 +65,4 @@ const RoomSchema: Schema = new mongoose.Schema({
   },
 });
 
-export default mongoose.model("Room", RoomSchema);
+export default mongoose.model<IRoom>("Room", RoomSchema);

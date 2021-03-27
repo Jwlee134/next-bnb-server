@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import { IWishlist } from "../types/user";
 
 const WishlistSchema: Schema = new mongoose.Schema({
   title: String,
@@ -18,4 +19,4 @@ const WishlistSchema: Schema = new mongoose.Schema({
   },
 });
 
-export default mongoose.model("Wishlist", WishlistSchema);
+export default mongoose.model<IWishlist>("Wishlist", WishlistSchema);

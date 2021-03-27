@@ -14,7 +14,6 @@ export const postOauth = async (req: Request, res: Response) => {
           avatarUrl || "/static/image/user/default_user_profile_image.jpg",
         email,
       });
-
       return res.status(200).send(newUser);
     }
     return res.status(200).send(user);

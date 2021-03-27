@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../../model/User";
+import { IUser } from "../../types/user";
 
 export const postLogin = async (req: Request, res: Response) => {
   const { email, password } = req.body;
@@ -44,7 +45,11 @@ export const getMe = async (req: Request, res: Response) => {
 
         const user = await User.findById(userId);
 
-        return res.status(200).send({ ...user._doc, isLoggedIn: true });
+        if (user) {
+          return res.status(200).send({ ...user.toObject(), isLoggedIn: true });
+        } else {
+          return res.status(404).send("존재하지 않는 사용자입니다.");
+        }
       }
     }
   } catch (error) {

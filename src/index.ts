@@ -3,7 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 
-import apiRouter from "./router/apiRouter";
+import router from "./router";
 import "./db";
 
 dotenv.config();
@@ -21,7 +21,7 @@ app.use(
 app.use(cookieParser());
 app.use(express.json());
 
-app.use("/api", apiRouter);
+app.use("/api", router);
 
 app.listen(port, () => {
   console.log(`> Server listening at http://localhost:${port}`);
