@@ -33,5 +33,5 @@ const httpServer = http.createServer(app).listen(port, () => {
 const io = new Server(httpServer, { cors: { origin: "*" } });
 
 io.on("connection", (socket) => {
-  socketController(socket);
+  socketController(socket, io);
 });
