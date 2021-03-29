@@ -14,19 +14,16 @@ const socketController = (
   io: Server<DefaultEventsMap, DefaultEventsMap>
 ) => {
   socket.on("login", async ({ user }) => {
+    // 유저가 첫 로그인일 경우
     if (clients.findIndex((client) => client.userId === user) === -1) {
       clients.push({ socketId: socket.id, userId: user });
-      const userData = await User.findById(user);
-      if (userData?.reservationRequest.length !== 0) {
-        io.to(socket.id).emit(
-          "reservationRequest",
-          userData?.reservationRequest
-        );
-        userData?.reservationRequest.splice(0);
-        userData?.save();
-      }
-      console.log(clients);
+    } else {
+      // 유저가 리프레쉬를 눌러 소켓아이디가 달라졌을 경우
+      const index = clients.findIndex((client) => client.userId === user);
+      clients.splice(index, 1);
+      clients.push({ socketId: socket.id, userId: user });
     }
+    console.log(clients);
   });
 
   socket.on("logout", ({ user }) => {
@@ -34,27 +31,15 @@ const socketController = (
     console.log(clients);
   });
 
-  socket.on(
-    "sendReservationRequest",
-    async ({ roomId, hostId, guestId, checkIn, checkOut, guestCount }) => {
-      const host = clients.find((client) => client.userId === hostId);
-      const guest = clients.find((client) => client.userId === guestId);
-      const requestForm = {
-        roomId,
-        guestId: (guest as Clients).userId,
-        checkIn,
-        checkOut,
-        guestCount,
-      };
-      if (!host) {
-        const hostData = await User.findById(hostId);
-        hostData?.reservationRequest.push(requestForm);
-        hostData?.save();
-        return;
-      }
-      io.to(host.socketId).emit("reservationRequest", requestForm);
+  socket.on("makeReservation", async ({ hostId }) => {
+    const host = clients.find((client) => client.userId === hostId);
+    if (host) {
+      io.to(host.socketId).emit("notification");
     }
-  );
+    const hostData = await User.findById(hostId);
+    hostData?.unreadNotifications.push({ label: "reservation-myRoom" });
+    hostData?.save();
+  });
 };
 
 export default socketController;

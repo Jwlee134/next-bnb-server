@@ -1,13 +1,6 @@
 import { Document } from "mongoose";
 import { IReview, IRoomDetail } from "./room";
 
-interface ReservationForm {
-  guestId: string;
-  checkIn: Date;
-  checkOut: Date;
-  guestCount: number;
-}
-
 export interface IUser extends Document {
   name: string;
   email: string;
@@ -20,7 +13,7 @@ export interface IUser extends Document {
   rooms: IRoomDetail["_id"];
   review: IReview["_id"];
   wishlist: IWishlist["_id"];
-  reservationRequest: ReservationForm[];
+  unreadNotifications: { label: string }[];
 }
 
 export interface IWishlist extends Document {

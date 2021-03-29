@@ -4,6 +4,7 @@ import { deleteFile, postFile } from "../controller/file";
 import { getLocation } from "../controller/location";
 import { postOauth } from "../controller/oauth";
 import { getPlace } from "../controller/place";
+import { getReservation, postReservation } from "../controller/reservation";
 
 import authRouter from "./authRouter";
 import roomRouter from "./roomRouter";
@@ -21,5 +22,6 @@ router.get("/place", getPlace);
 router.post("/oauth", postOauth);
 
 router.route("/file").post(postFile).delete(deleteFile);
+router.route("/reservation").get(getReservation).post(postReservation);
 
 export default router;

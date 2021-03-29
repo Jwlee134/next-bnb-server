@@ -11,15 +11,7 @@ const UserSchema: Schema = new mongoose.Schema({
   rooms: [{ type: mongoose.Schema.Types.ObjectId, ref: "Room" }],
   review: [{ type: mongoose.Schema.Types.ObjectId, ref: "Review" }],
   wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "Wishlist" }],
-  reservationRequest: [
-    {
-      roomId: { type: mongoose.Schema.Types.ObjectId, ref: "Room" },
-      guestId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-      checkIn: Date,
-      checkOut: Date,
-      guestCount: Number,
-    },
-  ],
+  unreadNotifications: [{ _id: false, label: String }],
   createdAt: {
     type: Date,
     default: Date.now,
