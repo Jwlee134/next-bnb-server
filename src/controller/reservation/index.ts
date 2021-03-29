@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import Reservation from "../../model/Reservation";
 import Room from "../../model/Room";
 import User from "../../model/User";
+import { IReservation } from "../../types/reservation";
 
 export const getReservation = async (req: Request, res: Response) => {
   const {
@@ -10,18 +11,6 @@ export const getReservation = async (req: Request, res: Response) => {
   } = req;
   try {
     if (keyword) {
-      const reservation = await Reservation.find()
-        .populate({
-          path: "room",
-          model: Room,
-          match: {
-            creator: user,
-          },
-        })
-        .populate({
-          path: "guest",
-          model: User,
-        });
       const currentUser = await User.findById(user);
       if (currentUser) {
         currentUser.unreadNotifications = currentUser.unreadNotifications.filter(
@@ -29,15 +18,53 @@ export const getReservation = async (req: Request, res: Response) => {
         );
         currentUser.save();
       } else {
-        return res.status(404).send("존재하지 않는 사용자입니다.");
+        return res.status(404).send("로그인이 필요한 서비스입니다.");
       }
-      return res.status(200).send(reservation);
-    } else {
-      const reservation = await Reservation.find({ guest: user }).populate({
-        path: "room",
-        model: Room,
-      });
-      return res.status(200).send(reservation);
+    }
+    let reservations: IReservation[];
+    let filtered: IReservation[];
+    switch (keyword) {
+      case "myRoom":
+        reservations = await Reservation.find()
+          .populate({
+            path: "room",
+            model: Room,
+            match: {
+              creator: user,
+            },
+          })
+          .populate({
+            path: "guest",
+            model: User,
+          })
+          .sort("-checkIn");
+        return res.status(200).send(reservations);
+      case "past":
+        reservations = await Reservation.find({
+          guest: user,
+        })
+          .populate({
+            path: "room",
+            model: Room,
+          })
+          .sort("-checkIn");
+        filtered = reservations.filter((reservation) => {
+          return reservation.checkOut.getTime() < new Date().getTime();
+        });
+        return res.status(200).send(filtered);
+      default:
+        reservations = await Reservation.find({
+          guest: user,
+        })
+          .populate({
+            path: "room",
+            model: Room,
+          })
+          .sort("-checkIn");
+        filtered = reservations.filter((reservation) => {
+          return reservation.checkOut.getTime() > new Date().getTime();
+        });
+        return res.status(200).send(filtered);
     }
   } catch (error) {
     return res.status(500).end();

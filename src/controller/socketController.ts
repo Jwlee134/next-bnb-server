@@ -31,14 +31,24 @@ const socketController = (
     console.log(clients);
   });
 
-  socket.on("makeReservation", async ({ hostId }) => {
+  socket.on("makeReservation", async ({ hostId, guestId }) => {
     const host = clients.find((client) => client.userId === hostId);
+    const guest = clients.find((client) => client.userId === guestId);
+    // 호스트가 접속중인 경우 바로 알림 전송
     if (host) {
       io.to(host.socketId).emit("notification");
     }
     const hostData = await User.findById(hostId);
     hostData?.unreadNotifications.push({ label: "reservation-myRoom" });
     hostData?.save();
+    const guestData = await User.findById(guestId);
+    setTimeout(() => {
+      if (guest) {
+        io.to(guest.socketId).emit("notification");
+      }
+      guestData?.unreadNotifications.push({ label: "reservation-past" });
+      guestData?.save();
+    }, 5000);
   });
 };
 
