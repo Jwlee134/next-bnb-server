@@ -37,10 +37,18 @@ export const postReview = async (req: Request, res: Response) => {
               ).toFixed(2)
             );
           });
-          const currentRatingValues: number[] = Object.values(rating);
+          const currentRatingValues: number[] = [
+            currentRoom.rating.cleanliness,
+            currentRoom.rating.accuracy,
+            currentRoom.rating.communication,
+            currentRoom.rating.location,
+            currentRoom.rating.checkIn,
+            currentRoom.rating.satisfaction,
+          ];
           const sum = currentRatingValues.reduce((a, b) => a + b);
           currentRoom.rating.total = Number((sum / 6).toFixed(2));
           currentRoom.save();
+          return res.status(200).end();
         } else {
           return res.status(404).send("존재하지 않는 숙소입니다.");
         }
