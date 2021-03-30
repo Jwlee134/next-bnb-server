@@ -5,6 +5,7 @@ import { getLocation } from "../controller/location";
 import { postOauth } from "../controller/oauth";
 import { getPlace } from "../controller/place";
 import { getReservation, postReservation } from "../controller/reservation";
+import { postReview } from "../controller/review";
 
 import authRouter from "./authRouter";
 import roomRouter from "./roomRouter";
@@ -20,7 +21,7 @@ router.get("/location", getLocation);
 router.get("/place", getPlace);
 
 router.post("/oauth", postOauth);
-
+router.post("/review", postReview);
 router.route("/file").post(postFile).delete(deleteFile);
 router.route("/reservation").get(getReservation).post(postReservation);
 

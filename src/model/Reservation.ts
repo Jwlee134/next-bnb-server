@@ -5,6 +5,7 @@ import { IReservation } from "../types/reservation";
 const ReservationSchema: Schema = new mongoose.Schema({
   room: { type: mongoose.Schema.Types.ObjectId, ref: "Room" },
   guest: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  host: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   checkIn: Date,
   checkOut: Date,
   guestCount: Number,
@@ -13,6 +14,7 @@ const ReservationSchema: Schema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  reviewed: { type: Boolean, default: false },
 });
 
 export default mongoose.model<IReservation>("Reservation", ReservationSchema);

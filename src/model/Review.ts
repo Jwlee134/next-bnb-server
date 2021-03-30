@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { IReview } from "../types/room";
+import { IReview } from "../types/review";
 
 const ReviewSchema: Schema = new mongoose.Schema({
   text: String,
@@ -8,10 +8,6 @@ const ReviewSchema: Schema = new mongoose.Schema({
     ref: "User",
   },
   createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-  updatedAt: {
     type: Date,
     default: Date.now,
   },

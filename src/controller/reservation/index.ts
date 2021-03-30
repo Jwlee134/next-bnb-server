@@ -21,17 +21,13 @@ export const getReservation = async (req: Request, res: Response) => {
         return res.status(404).send("로그인이 필요한 서비스입니다.");
       }
     }
-    let reservations: IReservation[];
-    let filtered: IReservation[];
+    let reservations: IReservation[], filtered: IReservation[];
     switch (keyword) {
       case "myRoom":
-        reservations = await Reservation.find()
+        reservations = await Reservation.find({ host: user })
           .populate({
             path: "room",
             model: Room,
-            match: {
-              creator: user,
-            },
           })
           .populate({
             path: "guest",
@@ -86,6 +82,7 @@ export const postReservation = async (req: Request, res: Response) => {
         price,
         room: room._id,
         guest: guest._id,
+        host: room.creator,
       });
       room.blockedDayList.push(checkIn);
       room.blockedDayList.push(checkOut);
