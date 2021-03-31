@@ -1,5 +1,6 @@
 import { Server, Socket } from "socket.io";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
+import Reservation from "../model/Reservation";
 import User from "../model/User";
 
 interface Clients {
@@ -23,6 +24,24 @@ const socketController = (
       clients.splice(index, 1);
       clients.push({ socketId: socket.id, userId: user });
     }
+    // 유저가 로그인할 경우 해당 유저의 읽지 않은 지난 예약 목록 푸쉬 알림
+    const reservation = await Reservation.find({
+      read: false,
+      guest: user,
+    });
+    const currentUser = await User.findById(user);
+    if (reservation && currentUser) {
+      const filtered = reservation.filter(
+        (item) => item.checkOut.getTime() < new Date().getTime()
+      );
+      if (filtered.length > 0) {
+        for (let i = 0; i < filtered.length; i++) {
+          currentUser.unreadNotifications.push({ label: "reservation-past" });
+        }
+        io.to(socket.id).emit("notification");
+        currentUser.save();
+      }
+    }
     console.log(clients);
   });
 
@@ -33,7 +52,6 @@ const socketController = (
 
   socket.on("makeReservation", async ({ hostId, guestId }) => {
     const host = clients.find((client) => client.userId === hostId);
-    const guest = clients.find((client) => client.userId === guestId);
     // 호스트가 접속중인 경우 바로 알림 전송
     if (host) {
       io.to(host.socketId).emit("notification");
@@ -41,14 +59,6 @@ const socketController = (
     const hostData = await User.findById(hostId);
     hostData?.unreadNotifications.push({ label: "reservation-myRoom" });
     hostData?.save();
-    const guestData = await User.findById(guestId);
-    setTimeout(() => {
-      if (guest) {
-        io.to(guest.socketId).emit("notification");
-      }
-      guestData?.unreadNotifications.push({ label: "reservation-past" });
-      guestData?.save();
-    }, 5000);
   });
 };
 

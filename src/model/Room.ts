@@ -42,7 +42,7 @@ const RoomSchema: Schema = new mongoose.Schema({
   blockedDayList: [String],
   price: Number,
   rating: [{ label: String, value: Number, _id: false }],
-  avgOfRating: Number,
+  avgOfRating: { type: Number, default: 0 },
   creator: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",

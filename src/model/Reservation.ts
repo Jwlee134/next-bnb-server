@@ -15,6 +15,7 @@ const ReservationSchema: Schema = new mongoose.Schema({
     default: Date.now,
   },
   reviewed: { type: Boolean, default: false },
+  read: { type: Boolean, default: false },
 });
 
 export default mongoose.model<IReservation>("Reservation", ReservationSchema);

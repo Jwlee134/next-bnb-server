@@ -44,6 +44,11 @@ export const getReservation = async (req: Request, res: Response) => {
             model: Room,
           })
           .sort("-checkIn");
+        for (const reservation of reservations) {
+          if (reservation.read) return;
+          reservation.read = true;
+          reservation.save();
+        }
         filtered = reservations.filter((reservation) => {
           return reservation.checkOut.getTime() < new Date().getTime();
         });
