@@ -41,36 +41,8 @@ const RoomSchema: Schema = new mongoose.Schema({
   availability: Number,
   blockedDayList: [String],
   price: Number,
-  rating: {
-    cleanliness: {
-      type: Number,
-      default: 0,
-    },
-    accuracy: {
-      type: Number,
-      default: 0,
-    },
-    communication: {
-      type: Number,
-      default: 0,
-    },
-    location: {
-      type: Number,
-      default: 0,
-    },
-    checkIn: {
-      type: Number,
-      default: 0,
-    },
-    satisfaction: {
-      type: Number,
-      default: 0,
-    },
-    total: {
-      type: Number,
-      default: 0,
-    },
-  },
+  rating: [{ label: String, value: Number, _id: false }],
+  avgOfRating: Number,
   creator: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",

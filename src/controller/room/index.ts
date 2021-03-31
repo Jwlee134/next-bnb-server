@@ -7,7 +7,19 @@ import { IWishlist } from "../../types/user";
 
 export const getRoom = async (req: Request, res: Response) => {
   try {
-    const room = await Room.findById(req.params.id).populate("creator");
+    const room = await Room.findById(req.params.id)
+      .populate({
+        path: "creator",
+        model: "User",
+      })
+      .populate({
+        path: "review",
+        model: "Review",
+        populate: {
+          path: "creator",
+          model: "User",
+        },
+      });
     res.status(200).send(room);
   } catch (error) {
     res.status(404).send("존재하지 않는 숙소입니다.");

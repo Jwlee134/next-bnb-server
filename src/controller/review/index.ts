@@ -10,6 +10,7 @@ export const postReview = async (req: Request, res: Response) => {
       body: { rating, text, reservation },
     },
   } = req;
+
   try {
     const currentReservation = await Reservation.findById(reservation);
     if (currentReservation) {
@@ -26,27 +27,30 @@ export const postReview = async (req: Request, res: Response) => {
         currentUser.save();
         if (currentRoom) {
           currentRoom.review.push(newReview);
-          const ratingKeys = Object.keys(rating);
-          const ratingValues: number[] = Object.values(rating);
-          ratingKeys.forEach((key, i) => {
-            currentRoom.rating[key] = Number(
-              (
-                (currentRoom.rating[key] * (currentRoom.review.length - 1) +
-                  ratingValues[i]) /
-                currentRoom.review.length
-              ).toFixed(2)
-            );
-          });
-          const currentRatingValues: number[] = [
-            currentRoom.rating.cleanliness,
-            currentRoom.rating.accuracy,
-            currentRoom.rating.communication,
-            currentRoom.rating.location,
-            currentRoom.rating.checkIn,
-            currentRoom.rating.satisfaction,
-          ];
-          const sum = currentRatingValues.reduce((a, b) => a + b);
-          currentRoom.rating.total = Number((sum / 6).toFixed(2));
+          if (currentRoom.rating.length === 0) {
+            currentRoom.rating = rating;
+          } else {
+            currentRoom.rating = currentRoom.rating.map((currentItem) => {
+              rating.forEach((item: { label: string; value: number }) => {
+                if (currentItem.label !== item.label) return;
+                currentItem.value = Number(
+                  (
+                    (currentItem.value * (currentRoom.review.length - 1) +
+                      item.value) /
+                    currentRoom.review.length
+                  ).toFixed(2)
+                );
+              });
+              return { label: currentItem.label, value: currentItem.value };
+            });
+          }
+          let sum = 0;
+          currentRoom.rating.forEach(
+            (item: { label: string; value: number }) => {
+              sum += item.value;
+            }
+          );
+          currentRoom.avgOfRating = Number((sum / 6).toFixed(2));
           currentRoom.save();
           return res.status(200).end();
         } else {
