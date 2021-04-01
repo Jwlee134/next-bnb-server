@@ -1,5 +1,6 @@
 import { Document } from "mongoose";
-import { IReview, IRoomDetail } from "./room";
+import { IReview } from "./review";
+import { IRoom } from "./room";
 
 export interface IUser extends Document {
   name: string;
@@ -10,15 +11,17 @@ export interface IUser extends Document {
   createdAt: Date;
   updatedAt: Date;
   isLoggedIn: boolean;
-  rooms: IRoomDetail["_id"];
+  rooms: IRoom["_id"];
   review: IReview["_id"];
+  reviewFromGuest: IReview["_id"];
+  reviewFromHost: IReview["_id"];
   wishlist: IWishlist["_id"];
   unreadNotifications: { label: string }[];
 }
 
 export interface IWishlist extends Document {
   title: string;
-  list: IRoomDetail["_id"];
+  list: IRoom["_id"];
   creator: IUser["_id"];
   createdAt: Date;
 }

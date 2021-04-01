@@ -1,8 +1,9 @@
 import { Document } from "mongoose";
-import { IUser, IRoomDetail } from "./room";
+import { IRoom } from "./room";
+import { IUser } from "./user";
 
 export interface IReservation extends Document {
-  room: IRoomDetail["_id"];
+  room: IRoom["_id"];
   guest: IUser["_id"];
   host: IUser["_id"];
   checkIn: Date;
@@ -10,6 +11,6 @@ export interface IReservation extends Document {
   guestCount: number;
   price: number;
   createdAt: Date;
-  reviewed: boolean;
-  read: boolean;
+  guestReviewed: boolean;
+  hostReviewed: boolean;
 }

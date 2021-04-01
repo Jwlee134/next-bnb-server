@@ -10,6 +10,8 @@ const UserSchema: Schema = new mongoose.Schema({
   avatarUrl: String,
   rooms: [{ type: mongoose.Schema.Types.ObjectId, ref: "Room" }],
   review: [{ type: mongoose.Schema.Types.ObjectId, ref: "Review" }],
+  reviewFromGuest: [{ type: mongoose.Schema.Types.ObjectId, ref: "Review" }],
+  reviewFromHost: [{ type: mongoose.Schema.Types.ObjectId, ref: "Review" }],
   wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "Wishlist" }],
   unreadNotifications: [{ _id: false, label: String }],
   createdAt: {

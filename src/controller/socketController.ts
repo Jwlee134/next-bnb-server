@@ -24,33 +24,14 @@ const socketController = (
       clients.splice(index, 1);
       clients.push({ socketId: socket.id, userId: user });
     }
-    // 유저가 로그인할 경우 해당 유저의 읽지 않은 지난 예약 목록 푸쉬 알림
-    const reservation = await Reservation.find({
-      read: false,
-      guest: user,
-    });
-    const currentUser = await User.findById(user);
-    if (reservation && currentUser) {
-      const filtered = reservation.filter(
-        (item) => item.checkOut.getTime() < new Date().getTime()
-      );
-      if (filtered.length > 0) {
-        for (let i = 0; i < filtered.length; i++) {
-          currentUser.unreadNotifications.push({ label: "reservation-past" });
-        }
-        io.to(socket.id).emit("notification");
-        currentUser.save();
-      }
-    }
     console.log(clients);
   });
 
   socket.on("logout", ({ user }) => {
     clients = clients.filter((client) => client.userId !== user);
-    console.log(clients);
   });
 
-  socket.on("makeReservation", async ({ hostId, guestId }) => {
+  socket.on("makeReservation", async ({ hostId }) => {
     const host = clients.find((client) => client.userId === hostId);
     // 호스트가 접속중인 경우 바로 알림 전송
     if (host) {

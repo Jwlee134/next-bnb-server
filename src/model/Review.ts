@@ -7,6 +7,10 @@ const ReviewSchema: Schema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
+  room: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Room",
+  },
   createdAt: {
     type: Date,
     default: Date.now,

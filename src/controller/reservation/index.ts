@@ -44,13 +44,8 @@ export const getReservation = async (req: Request, res: Response) => {
             model: Room,
           })
           .sort("-checkIn");
-        for (const reservation of reservations) {
-          if (reservation.read) return;
-          reservation.read = true;
-          reservation.save();
-        }
         filtered = reservations.filter((reservation) => {
-          return reservation.checkOut.getTime() < new Date().getTime();
+          return reservation.checkOut.getTime() < Date.now();
         });
         return res.status(200).send(filtered);
       default:
@@ -63,7 +58,7 @@ export const getReservation = async (req: Request, res: Response) => {
           })
           .sort("-checkIn");
         filtered = reservations.filter((reservation) => {
-          return reservation.checkOut.getTime() > new Date().getTime();
+          return reservation.checkOut.getTime() > Date.now();
         });
         return res.status(200).send(filtered);
     }
