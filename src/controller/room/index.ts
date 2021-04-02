@@ -19,6 +19,9 @@ export const getRoom = async (req: Request, res: Response) => {
           path: "creator",
           model: "User",
         },
+        options: {
+          sort: "-createdAt",
+        },
       });
     res.status(200).send(room);
   } catch (error) {

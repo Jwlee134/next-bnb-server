@@ -9,6 +9,9 @@ export const postFile = async (req: Request, res: Response) => {
     accessKeyId: process.env.S3_ACCESSKEY_ID,
     secretAccessKey: process.env.S3_SECRET_ACCESSKEY_ID,
   });
+  const {
+    query: { location },
+  } = req;
   try {
     const form = new formidable.IncomingForm();
     // https://cheese10yun.github.io/Node-AWS-S3-Upload/
@@ -18,11 +21,11 @@ export const postFile = async (req: Request, res: Response) => {
           Object.values(files).map(async (file) => {
             // 이미지 리사이즈 https://mygumi.tistory.com/349 https://sub0709.tistory.com/1
             const resized = await sharp((file as any).path)
-              .resize(1200)
+              .resize(800)
               .toBuffer();
             const url = await new Promise<string>((resolve, reject) => {
               s3.upload({
-                Bucket: `${process.env.S3_BUCKET_NAME!}/room`,
+                Bucket: `${process.env.S3_BUCKET_NAME!}/${location}`,
                 ACL: "public-read",
                 Key: `${uuidv4()}-${(file as any).name}`,
                 Body: resized,
@@ -48,10 +51,13 @@ export const deleteFile = async (req: Request, res: Response) => {
     accessKeyId: process.env.S3_ACCESSKEY_ID,
     secretAccessKey: process.env.S3_SECRET_ACCESSKEY_ID,
   });
-  const { key } = req.query;
+  const { key, location } = req.query;
   try {
     s3.deleteObject(
-      { Bucket: `${process.env.S3_BUCKET_NAME!}/room`, Key: key as string },
+      {
+        Bucket: `${process.env.S3_BUCKET_NAME!}/${location}`,
+        Key: key as string,
+      },
       (err) => {
         if (err) {
           return res.status(500).send("다시 시도해 주세요.");
