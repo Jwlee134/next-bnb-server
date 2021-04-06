@@ -1,14 +1,13 @@
 import { Request, Response } from "express";
-import Room from "../../model/Room";
 import User from "../../model/User";
 import Wishlist from "../../model/Wishlist";
 
 export const getWishlist = async (req: Request, res: Response) => {
-  const { user } = req.headers;
+  const { id } = req.query;
   try {
-    const data = await Wishlist.find({ creator: user })
+    const data = await Wishlist.find({ creator: id })
       .sort("-list")
-      .populate({ path: "list", model: Room });
+      .populate({ path: "list", model: "Room" });
     return res.status(200).send(data);
   } catch (error) {
     return res.status(500).send("위시리스트를 불러오는 데 실패했습니다.");
