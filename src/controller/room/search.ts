@@ -154,6 +154,6 @@ export const getSearchResults = async (req: Request, res: Response) => {
       originalLength: filteredBySpaces.length,
     });
   } catch (error) {
-    return res.status(500).send("숙소를 불러올 수 없습니다.");
+    return res.status(400).send("숙소를 불러올 수 없습니다.");
   }
 };

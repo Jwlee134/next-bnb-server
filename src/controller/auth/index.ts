@@ -89,5 +89,5 @@ export const postSignUp = async (req: Request, res: Response) => {
 
 export const postLogout = async (req: Request, res: Response) => {
   res.clearCookie("access_token");
-  return res.status(204).json({ isLoggedIn: false });
+  return res.status(200).json({ isLoggedIn: false });
 };

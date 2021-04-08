@@ -27,7 +27,7 @@ export const deleteItem = async (req: Request, res: Response) => {
       );
       wishlist.list.splice(index, 1);
       wishlist.save();
-      return res.status(200).end();
+      return res.status(204).end();
     } else {
       return res.status(404).send("존재하지 않는 위시리스트입니다.");
     }
