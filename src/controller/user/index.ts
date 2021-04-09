@@ -7,36 +7,11 @@ export const getUser = async (req: Request, res: Response) => {
     query: { id },
   } = req;
   try {
-    const user = await User.findById(id)
-      .populate({ path: "rooms", model: "Room" })
-      .populate({
-        path: "review",
-        model: "Review",
-        options: {
-          sort: "-createdAt",
-        },
-      })
-      .populate({
-        path: "reviewFromHost",
-        model: "Review",
-        populate: { path: "creator", model: "User" },
-        options: {
-          sort: "-createdAt",
-        },
-      })
-      .populate({
-        path: "reviewFromGuest",
-        model: "Review",
-        populate: { path: "room", model: "Room" },
-      })
-      .populate({
-        path: "reviewFromGuest",
-        model: "Review",
-        populate: { path: "creator", model: "User" },
-        options: {
-          sort: "-createdAt",
-        },
-      });
+    const user = await User.findById(id).populate({
+      path: "rooms",
+      model: "Room",
+    });
+
     if (user) {
       return res.status(200).send(user);
     }

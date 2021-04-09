@@ -6,6 +6,9 @@ import Wishlist from "../../model/Wishlist";
 import { IWishlist } from "../../types/user";
 
 export const getRoom = async (req: Request, res: Response) => {
+  const {
+    query: { page, limit = "6" },
+  } = req;
   try {
     const room = await Room.findById(req.params.id)
       .populate({
@@ -23,9 +26,17 @@ export const getRoom = async (req: Request, res: Response) => {
           sort: "-createdAt",
         },
       });
-    res.status(200).send(room);
+    // 리뷰 더보기 페이지
+    if (page && room) {
+      const spliced = room.review.splice(
+        (Number(page) - 1) * Number(limit),
+        Number(limit)
+      );
+      return res.status(200).send(spliced);
+    }
+    return res.status(200).send(room);
   } catch (error) {
-    res.status(404).send("존재하지 않는 숙소입니다.");
+    return res.status(404).send("존재하지 않는 숙소입니다.");
   }
 };
 

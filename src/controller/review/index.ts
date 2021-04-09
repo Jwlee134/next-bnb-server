@@ -86,6 +86,6 @@ export const postReview = async (req: Request, res: Response) => {
       return res.status(404).send("존재하지 않는 예약입니다.");
     }
   } catch (error) {
-    return res.status(500).end();
+    return res.status(500).send("다시 시도해 주세요.");
   }
 };
