@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../../model/User";
-import { IUser } from "../../types/user";
 
 export const postLogin = async (req: Request, res: Response) => {
   const { email, password } = req.body;
@@ -29,7 +28,7 @@ export const postLogin = async (req: Request, res: Response) => {
       path: "/",
     });
 
-    return res.status(200).send(user);
+    return res.status(200).send({ ...user.toObject(), isLoggedIn: true });
   } catch (error) {
     return res.status(500).end();
   }
@@ -81,7 +80,7 @@ export const postSignUp = async (req: Request, res: Response) => {
       path: "/",
     });
 
-    return res.status(200).send(newUser);
+    return res.status(200).send({ ...newUser.toObject(), isLoggedIn: true });
   } catch (error) {
     return res.status(500).end();
   }

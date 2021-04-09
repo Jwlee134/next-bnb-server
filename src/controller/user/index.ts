@@ -51,8 +51,7 @@ export const updateUser = async (req: Request, res: Response) => {
     secretAccessKey: process.env.S3_SECRET_ACCESSKEY_ID,
   });
   const {
-    body: { avatarUrl, text, user },
-    headers: { user: currentUser },
+    body: { avatarUrl, text, user, currentUser },
   } = req;
   if (currentUser !== user) return res.status(400).end();
   try {
