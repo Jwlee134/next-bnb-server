@@ -4,8 +4,7 @@ import User from "../../model/User";
 import { IRoom } from "../../types/room";
 
 export const getManagement = async (req: Request, res: Response) => {
-  const { user: id } = req.headers;
-  const { sortBy, order, term } = req.query;
+  const { sortBy, order, term, id } = req.query;
   const filter = { $regex: term || "", $options: "i" };
 
   try {

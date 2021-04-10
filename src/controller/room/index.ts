@@ -2,8 +2,7 @@ import { Request, Response } from "express";
 import aws from "aws-sdk";
 import Room from "../../model/Room";
 import User from "../../model/User";
-import Wishlist from "../../model/Wishlist";
-import { IWishlist } from "../../types/user";
+import { IReview } from "../../types/review";
 
 export const getRoom = async (req: Request, res: Response) => {
   const {
@@ -75,7 +74,7 @@ export const updateRoom = async (req: Request, res: Response) => {
       ...room,
       updatedAt: new Date(),
     });
-    return res.status(200).end();
+    return res.status(204).end();
   } catch (error) {
     return res
       .status(500)
@@ -90,32 +89,27 @@ export const deleteRoom = async (req: Request, res: Response) => {
   });
   const {
     params: { id },
-    headers: { user },
+    query: { userId },
   } = req;
   try {
-    const creator = await User.findById(user).populate("wishlist");
+    const currentRoom = await Room.findById(id);
+    if (currentRoom?.creator.toString() !== userId?.toString()) {
+      return res.status(403).send("승인되지 않은 요청입니다.");
+    }
+    const creator = await User.findById(userId).populate("reviewFromGuest");
     if (creator) {
       const index = creator.rooms.findIndex((room: object) => {
         return room.toString() === id?.toString();
       });
       creator.rooms.splice(index, 1);
+      creator.reviewFromGuest = creator.reviewFromGuest.filter(
+        (review: IReview) => {
+          return review.room.toString() !== id;
+        }
+      );
       creator.save();
     } else {
       return res.status(404).send("로그인이 필요한 서비스입니다.");
-    }
-
-    const wishlistId = creator.wishlist.find((list: IWishlist) => {
-      return list.list.includes(id);
-    })._id;
-    const wishlist = await Wishlist.findById(wishlistId);
-    if (wishlist) {
-      const wishlistIndex = wishlist.list.findIndex(
-        (list: object) => list.toString() === id?.toString()
-      );
-      wishlist.list.splice(wishlistIndex, 1);
-      wishlist.save();
-    } else {
-      return res.status(404).send("존재하지 않는 숙소입니다.");
     }
 
     const data = await Room.findByIdAndDelete(id);
@@ -138,7 +132,7 @@ export const deleteRoom = async (req: Request, res: Response) => {
       );
     }
 
-    return res.status(200).end();
+    return res.status(204).end();
   } catch (error) {
     return res
       .status(500)
