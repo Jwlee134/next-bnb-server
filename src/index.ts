@@ -17,7 +17,7 @@ const port = process.env.PORT || 8000;
 
 app.use(
   cors({
-    origin: "https://next-bnb-client.vercel.app",
+    origin: true,
     credentials: true,
   })
 );
@@ -35,7 +35,7 @@ const httpServer = http.createServer(app).listen(port, () => {
 });
 
 const io = new Server(httpServer, {
-  cors: { origin: "https://next-bnb-client.vercel.app" },
+  cors: { origin: "*" },
   transports: ["polling"],
 });
 

@@ -166,7 +166,12 @@ exports.postSignUp = postSignUp;
 var postLogout = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         return [2 /*return*/, res
-                .clearCookie("access_token", { path: "/", sameSite: "none", secure: true })
+                .clearCookie("access_token", {
+                path: "/",
+                httpOnly: true,
+                sameSite: "none",
+                secure: true,
+            })
                 .status(200)
                 .json({ isLoggedIn: false })];
     });
