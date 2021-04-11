@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../../model/User";
 
@@ -26,6 +26,8 @@ export const postLogin = async (req: Request, res: Response) => {
       expires: new Date(Date.now() + 60 * 60 * 24 * 1000 * 3),
       httpOnly: true,
       path: "/",
+      sameSite: "none",
+      secure: true,
     });
 
     return res.status(200).send({ ...user.toObject(), isLoggedIn: true });
@@ -78,6 +80,8 @@ export const postSignUp = async (req: Request, res: Response) => {
       expires: new Date(Date.now() + 60 * 60 * 24 * 1000 * 3),
       httpOnly: true,
       path: "/",
+      sameSite: "none",
+      secure: true,
     });
 
     return res.status(200).send({ ...newUser.toObject(), isLoggedIn: true });
@@ -87,6 +91,13 @@ export const postSignUp = async (req: Request, res: Response) => {
 };
 
 export const postLogout = async (req: Request, res: Response) => {
-  res.clearCookie("access_token");
-  return res.status(200).json({ isLoggedIn: false });
+  return res
+    .clearCookie("access_token", {
+      path: "/",
+      httpOnly: true,
+      sameSite: "none",
+      secure: true,
+    })
+    .status(200)
+    .json({ isLoggedIn: false });
 };

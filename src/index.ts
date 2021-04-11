@@ -13,16 +13,20 @@ dotenv.config();
 
 const app = express();
 
-const port = 8000;
+const port = process.env.PORT || 8000;
 
 app.use(
   cors({
-    origin: true,
+    origin: "https://next-bnb-client.vercel.app",
     credentials: true,
   })
 );
 app.use(cookieParser());
 app.use(express.json());
+
+app.get("/", (req, res) => {
+  res.send("Hello Beanstalk!");
+});
 
 app.use("/api", router);
 
@@ -30,7 +34,10 @@ const httpServer = http.createServer(app).listen(port, () => {
   console.log(`> Server listening at http://localhost:${port}`);
 });
 
-const io = new Server(httpServer, { cors: { origin: "*" } });
+const io = new Server(httpServer, {
+  cors: { origin: "https://next-bnb-client.vercel.app" },
+  transports: ["polling"],
+});
 
 io.on("connection", (socket) => {
   socketController(socket, io);

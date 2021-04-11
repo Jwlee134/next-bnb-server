@@ -1,6 +1,5 @@
 import { Server, Socket } from "socket.io";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
-import Reservation from "../model/Reservation";
 import User from "../model/User";
 
 interface Clients {
@@ -24,7 +23,6 @@ const socketController = (
       clients.splice(index, 1);
       clients.push({ socketId: socket.id, userId: user });
     }
-    console.log(clients);
   });
 
   socket.on("logout", ({ user }) => {
