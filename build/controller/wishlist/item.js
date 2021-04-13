@@ -56,7 +56,7 @@ var postItem = function (req, res) { return __awaiter(void 0, void 0, void 0, fu
                 if (wishlist) {
                     wishlist.list.push(roomId);
                     wishlist.save();
-                    return [2 /*return*/, res.status(200).end()];
+                    return [2 /*return*/, res.status(204).end()];
                 }
                 else {
                     return [2 /*return*/, res.status(404).send("존재하지 않는 위시리스트입니다.")];
@@ -71,7 +71,7 @@ var postItem = function (req, res) { return __awaiter(void 0, void 0, void 0, fu
 }); };
 exports.postItem = postItem;
 var deleteItem = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, roomId, listId, wishlist, index, error_2;
+    var _a, roomId, listId, wishlist, error_2;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -79,14 +79,18 @@ var deleteItem = function (req, res) { return __awaiter(void 0, void 0, void 0, 
                 _b.label = 1;
             case 1:
                 _b.trys.push([1, 3, , 4]);
-                return [4 /*yield*/, Wishlist_1.default.findById(listId)];
+                return [4 /*yield*/, Wishlist_1.default.findById(listId).populate({
+                        path: "list",
+                        model: "Room",
+                    })];
             case 2:
                 wishlist = _b.sent();
                 if (wishlist) {
-                    index = wishlist.list.findIndex(function (item) { return item.toString() === roomId; });
-                    wishlist.list.splice(index, 1);
+                    wishlist.list = wishlist.list.filter(function (item) {
+                        return item.id !== roomId;
+                    });
                     wishlist.save();
-                    return [2 /*return*/, res.status(204).end()];
+                    return [2 /*return*/, res.status(200).send(wishlist)];
                 }
                 else {
                     return [2 /*return*/, res.status(404).send("존재하지 않는 위시리스트입니다.")];

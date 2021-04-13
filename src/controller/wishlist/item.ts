@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import Wishlist from "../../model/Wishlist";
+import { IRoom } from "../../types/room";
 
 export const postItem = async (req: Request, res: Response) => {
   const { roomId, listId } = req.body;
@@ -8,7 +9,7 @@ export const postItem = async (req: Request, res: Response) => {
     if (wishlist) {
       wishlist.list.push(roomId);
       wishlist.save();
-      return res.status(200).end();
+      return res.status(204).end();
     } else {
       return res.status(404).send("존재하지 않는 위시리스트입니다.");
     }
@@ -20,14 +21,16 @@ export const postItem = async (req: Request, res: Response) => {
 export const deleteItem = async (req: Request, res: Response) => {
   const { roomId, listId } = req.query;
   try {
-    const wishlist = await Wishlist.findById(listId);
+    const wishlist = await Wishlist.findById(listId).populate({
+      path: "list",
+      model: "Room",
+    });
     if (wishlist) {
-      const index = wishlist.list.findIndex(
-        (item: object) => item.toString() === roomId
-      );
-      wishlist.list.splice(index, 1);
+      wishlist.list = wishlist.list.filter((item: IRoom) => {
+        return item.id !== roomId;
+      });
       wishlist.save();
-      return res.status(204).end();
+      return res.status(200).send(wishlist);
     } else {
       return res.status(404).send("존재하지 않는 위시리스트입니다.");
     }

@@ -3,9 +3,9 @@ import User from "../../model/User";
 import Wishlist from "../../model/Wishlist";
 
 export const getWishlist = async (req: Request, res: Response) => {
-  const { id } = req.query;
+  const { user } = req.headers;
   try {
-    const data = await Wishlist.find({ creator: id })
+    const data = await Wishlist.find({ creator: user })
       .sort("-list")
       .populate({ path: "list", model: "Room" });
     return res.status(200).send(data);

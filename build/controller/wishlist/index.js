@@ -43,15 +43,15 @@ exports.postWishlist = exports.getWishlist = void 0;
 var User_1 = __importDefault(require("../../model/User"));
 var Wishlist_1 = __importDefault(require("../../model/Wishlist"));
 var getWishlist = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, data, error_1;
+    var user, data, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                id = req.query.id;
+                user = req.headers.user;
                 _a.label = 1;
             case 1:
                 _a.trys.push([1, 3, , 4]);
-                return [4 /*yield*/, Wishlist_1.default.find({ creator: id })
+                return [4 /*yield*/, Wishlist_1.default.find({ creator: user })
                         .sort("-list")
                         .populate({ path: "list", model: "Room" })];
             case 2:
