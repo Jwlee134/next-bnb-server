@@ -1,3 +1,4 @@
+import { addDays, format } from "date-fns";
 import { Request, Response } from "express";
 import Reservation from "../../model/Reservation";
 import Room from "../../model/Room";
@@ -84,14 +85,17 @@ export const postReservation = async (req: Request, res: Response) => {
         guest: guest._id,
         host: room.creator,
       });
-      room.blockedDayList.push(checkIn);
-      room.blockedDayList.push(checkOut);
+      room.blockedDayList.push(format(new Date(checkIn), "yyyy-MM-dd"));
+      room.blockedDayList.push(format(new Date(checkOut), "yyyy-MM-dd"));
+      room.blockedDayList = room.blockedDayList.filter((blockedDay) => {
+        return addDays(new Date(), -1) < new Date(blockedDay);
+      });
       room.save();
       return res.status(204).end();
     } else {
       return res.status(404).send("존재하지 않는 숙소입니다.");
     }
   } catch (error) {
-    return res.status(500).end();
+    return res.status(500).send("예약에 실패했습니다.");
   }
 };

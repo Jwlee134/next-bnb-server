@@ -1,4 +1,4 @@
-import { addHours, addMonths, eachDayOfInterval } from "date-fns";
+import { addHours, addMonths, eachDayOfInterval, format } from "date-fns";
 import { Request, Response } from "express";
 import Room from "../../model/Room";
 
@@ -35,7 +35,7 @@ export const getSearchResults = async (req: Request, res: Response) => {
       });
       // 데이터베이스에 저장된 날짜의 형식으로 포맷
       formatDates = datesArray.map((date) => {
-        return addHours(date, 12).toISOString();
+        return format(date, "yyyy-MM-dd");
       });
     }
 
