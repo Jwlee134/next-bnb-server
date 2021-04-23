@@ -25,17 +25,21 @@ export const getRoom = async (req: Request, res: Response) => {
           sort: "-createdAt",
         },
       });
-    // 리뷰 더보기 페이지
-    if (page && room) {
-      const spliced = room.review.splice(
-        (Number(page) - 1) * Number(limit),
-        Number(limit)
-      );
-      return res.status(200).send(spliced);
+    if (room) {
+      // 리뷰 더보기 페이지
+      if (page) {
+        const spliced = room.review.splice(
+          (Number(page) - 1) * Number(limit),
+          Number(limit)
+        );
+        return res.status(200).send(spliced);
+      }
+      return res.status(200).send(room);
+    } else {
+      return res.status(404).send("존재하지 않는 숙소입니다.");
     }
-    return res.status(200).send(room);
   } catch (error) {
-    return res.status(404).send("존재하지 않는 숙소입니다.");
+    return res.status(500).send("숙소를 불러오는 데 실패했습니다.");
   }
 };
 
