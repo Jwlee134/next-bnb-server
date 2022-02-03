@@ -1,7 +1,8 @@
+import dotenv from "dotenv";
+dotenv.config();
 import express from "express";
 import http from "http";
 import cors from "cors";
-import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import { Server } from "socket.io";
 
@@ -9,23 +10,16 @@ import router from "./router";
 import "./db";
 import socketController from "./controller/socketController";
 
-dotenv.config();
-
 const app = express();
 
 const port = process.env.PORT || 8000;
 
-app.use(
-  cors({
-    origin: true,
-    credentials: true,
-  })
-);
+app.use(cors({ origin: true, credentials: true }));
 app.use(cookieParser());
 app.use(express.json());
 
 app.get("/", (req, res) => {
-  res.send("Hello Beanstalk!");
+  res.send("Hello EC2!");
 });
 
 app.use("/api", router);
