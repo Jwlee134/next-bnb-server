@@ -13,6 +13,6 @@
 - Socket.io
 - AWS
   - S3
-  - Elastic Beanstalk
+  - EC2
   - Route 53
   - Certificate Manager
