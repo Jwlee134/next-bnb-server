@@ -63,7 +63,7 @@ export const getSearchResults = async (req: Request, res: Response) => {
       },
       // 검색 필터(집 전체, 개인실, 다인실)
       roomType: {
-        $in: roomType,
+        $in: roomType as string[],
       },
       // 가격 필터
       price: {
